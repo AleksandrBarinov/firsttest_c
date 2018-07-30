@@ -2,11 +2,16 @@ package steps;
 
 import cucumber.api.DataTable;
 import cucumber.api.java.en.When;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.WebElement;
 import pages.QuestionnairePage;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static steps.BaseSteps.driver;
 
 public class ScenarioSteps {
 
@@ -27,8 +32,8 @@ public class ScenarioSteps {
     }
     @When("^выполнено нажатие на кнопку - Минимальный$")
     public void selectMinimal(){
-        ArrayList tabs2 = new ArrayList(BaseSteps.driver.getWindowHandles());
-        BaseSteps.driver.switchTo().window((String) tabs2.get(1));
+        ArrayList tabs2 = new ArrayList(driver.getWindowHandles());
+        driver.switchTo().window((String) tabs2.get(1));
         questionnaireSteps.selectMinimal();
     }
     @When("^выполнено нажатие на кнопку - Оформить$")
@@ -47,10 +52,29 @@ public class ScenarioSteps {
     public void selectContinue(){
         questionnaireSteps.selectContinue();
     }
+
+    public boolean isElementPresent(WebElement element) {
+        try {
+            driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+            return element.isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+        finally {
+            driver.manage().timeouts().implicitlyWait(4, TimeUnit.SECONDS);
+        }
+    }
+
     @When("проверка сообщения об ошибке")
     public void checkErrorMessage(){
-        QuestionnairePage questionnairePage = new QuestionnairePage(BaseSteps.driver);
+        QuestionnairePage questionnairePage = new QuestionnairePage(driver);
 
-        assertEquals("Заполнены не все поля",questionnairePage.getErrorMessage().getText());
+        isElementPresent(questionnairePage.getErrorMessage());
+
+        if(isElementPresent(questionnairePage.getErrorMessage()) == true){
+            assertEquals("Заполнены не все обязательные поля",questionnairePage.getErrorMessage().getText());
+        } else {assertTrue("Сообщение об ошибке отсутствует на странице", isElementPresent(questionnairePage.getErrorMessage()));}
+
+
     }
 }

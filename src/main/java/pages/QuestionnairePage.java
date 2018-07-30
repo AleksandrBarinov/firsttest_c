@@ -58,6 +58,7 @@ public class QuestionnairePage {
         Wait<WebDriver> wait = new WebDriverWait(driver, 15, 1000);
         wait.until(ExpectedConditions.visibilityOf(minimal)).click();
     }
+
     public void selectRegister (WebDriver driver) {
         Wait <WebDriver> wait = new WebDriverWait(driver, 15, 1000);
         wait.until(ExpectedConditions.visibilityOf(register)).click();
@@ -67,7 +68,6 @@ public class QuestionnairePage {
         Wait<WebDriver> wait = new WebDriverWait(driver, 15, 1000);
         wait.until(ExpectedConditions.visibilityOf(continueButton)).click();
     }
-
 
 
     public void fillField(String fieldName, String value) {
